@@ -1,7 +1,4 @@
-# This is a sample Python script.
-
-# Press Mayús+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+from RPi import GPIO
 
 
 def print_hi(name):
@@ -9,8 +6,14 @@ def print_hi(name):
     print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    # print_hi('PyCharm')
+    GPIO.setmode(GPIO.BOARD)
+    GPIO.setup(8, GPIO.OUT, initial=GPIO.LOW)
+    # main loop
+    while True:
+        GPIO.output(8, GPIO.HIGH)
+    time.sleep(1)
+    # off
+    GPIO.output(8, GPIO.LOW)
+    time.sleep(1)
