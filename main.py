@@ -1,3 +1,5 @@
+from datetime import time
+
 from RPi import GPIO
 
 
@@ -13,7 +15,7 @@ if __name__ == '__main__':
     # main loop
     while True:
         GPIO.output(8, GPIO.HIGH)
-    time.sleep(1)
-    # off
-    GPIO.output(8, GPIO.LOW)
-    time.sleep(1)
+        time.sleep(1)
+        # off
+        GPIO.output(8, GPIO.LOW)
+        time.sleep(1)
