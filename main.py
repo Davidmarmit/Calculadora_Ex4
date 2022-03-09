@@ -2,6 +2,10 @@ import RPi.GPIO as GPIO
 import sys
 import time
 
+from _cffi_backend import string
+
+import I2C_LCD_driver
+
 # define PINs according to cabling
 col_list = [21, 20, 16, 12]
 # following array matches 5,6,7,8 PINs from 4x4 Keypad Matrix
@@ -78,6 +82,11 @@ def calculate(operation):
             print()
             print("INOTIME le informa de que no se puede dividir en estos momentos, porfavor, vuelva a intentarlo "
                   "mas tarde.")
+            mylcd.lcd_clear()
+            mylcd.lcd_display_string("INOTIME dice:", 1, 0)
+            mylcd.lcd_display_string("Syntax Error :(",2,0)
+            time.sleep(5)
+            mylcd.lcd_clear()
             final_result = 0
             break
 
@@ -88,28 +97,39 @@ def calculate(operation):
 
     return final_result
 
+if __name__ == '__main__':
+    mylcd = I2C_LCD_driver.lcd()
+    result = 0
+    calculated = False
+    puntero = 0
+    # main program
+    while True:
 
-result = 0
-calculated = False
-# main program
-while True:
-    try:
-        key = Keypad4x4Read(col_list, row_list)
-        if key is not None:
-            operation = operation + key
-            if key == "=":
-                result = calculate(operation)
-                calculated = True
-            time.sleep(0.3)  # gives user enough time to release without having double inputs
-            print(key, end='')
-            if calculated:
-                print()
-                print(result)
-                print()
-                operation = ""
-                calculated = False
+        try:
+            key = Keypad4x4Read(col_list, row_list)
+            if key is not None:
+                operation = operation + key
+                if key == "=":
+                    result = calculate(operation)
+                    calculated = True
+                time.sleep(0.3)  # gives user enough time to release without having double inputs
+                print(key, end='')
+                mylcd.lcd_display_string(key, 1, puntero)
+                puntero += 1
+                if puntero > 15:
+                    puntero = 15
+                if calculated:
+                    print()
+                    print(result)
+                    mylcd.lcd_display_string(str(result), 2, 0)
+                    print()
+                    time.sleep(5)
+                    operation = ""
+                    calculated = False
+                    mylcd.lcd_clear()
+                    puntero = 0
 
-    # PINs final cleaning on interrupt
-    except KeyboardInterrupt:
-        GPIO.cleanup()
-        sys.exit()
+        # PINs final cleaning on interrupt
+        except KeyboardInterrupt:
+            GPIO.cleanup()
+            sys.exit()
